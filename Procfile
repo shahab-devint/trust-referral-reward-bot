@@ -1,1 +1,1 @@
-web: python trust_referral_reward_bot.py
+worker: python trust_referral_reward_bot.py
