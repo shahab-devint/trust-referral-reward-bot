@@ -2,6 +2,7 @@ import logging
 import uuid
 import sqlite3
 import requests
+import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from telegram import ChatInviteLink
