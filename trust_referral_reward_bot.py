@@ -201,8 +201,11 @@ def main():
     # Initialize database
     init_db()
     
-    # Replace with your new bot token from BotFather
-    TOKEN = "YOUR_NEW_BOT_TOKEN"
+    # Get token from environment variable
+    TOKEN = os.getenv("TELEGRAM_TOKEN")
+    if not TOKEN:
+        logger.error("TELEGRAM_TOKEN environment variable not set")
+        raise ValueError("TELEGRAM_TOKEN environment variable not set")
     
     # Create the Application without JobQueue
     application = Application.builder().token(TOKEN).job_queue(None).build()
