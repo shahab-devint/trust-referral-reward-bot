@@ -6,6 +6,8 @@ import os
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from telegram import ChatInviteLink
+from flask import Flask
+import threading
 
 # Enable logging
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
@@ -13,6 +15,17 @@ logger = logging.getLogger(__name__)
 
 # SQLite database setup
 DB_PATH = "bot_data.db"
+
+# Flask app for health checks
+app = Flask(__name__)
+
+@app.route('/')
+def health_check():
+    return 'OK', 200
+
+def run_flask():
+    port = int(os.getenv('PORT', 8000))
+    app.run(host='0.0.0.0', port=port)
 
 def init_db():
     """Initialize SQLite database and create tables if they don't exist."""
@@ -111,7 +124,7 @@ async def get_link(update: Update, context: ContextTypes.DEFAULT_TYPE):
             member_limit=1  # Single-use link for simplicity
         )
         # Append the deep link parameter
-        deep_link = f"https://t.me{context.bot.username}?start=inviter_{user_id}"
+        deep_link = f"https16://t.me{context.bot.username}?start=inviter_{user_id}"
         
         # Send the link to the user
         await update.message.reply_text(
@@ -210,6 +223,10 @@ def main():
     
     # Create the Application without JobQueue
     application = Application.builder().token(TOKEN).job_queue(None).build()
+    
+    # Start Flask in a separate thread
+    flask_thread = threading.Thread(target=run_flask)
+    flask_thread.start()
     
     # Add debug handler for all updates
     application.add_handler(MessageHandler(filters.ALL, debug_update), group=-1)
